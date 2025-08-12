@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {computed, ref} from "vue";
-import {AccountType, type IAccount, type IAccountForm} from "./types.ts";
+import {AccountType, type IAccountForm} from "./types.ts";
 
-  const errors = ref<{login?:string;password?:string}>({
+  const errors = ref<{login:string|null;password?:string|null}>({
     login: null,
     password: null,
   })
@@ -25,13 +25,12 @@ import {AccountType, type IAccount, type IAccountForm} from "./types.ts";
       errors.value.password="Остуствтует значение";
       return
     }
-  //   Some logics
   }
 
 </script>
 
 <template>
-  <form class="account-form" @submit.prevent="sendForm">
+  <form class="account-form" @submit.prevent="validateForm">
     <el-input  v-model="formFields.label" @blur="validateForm" class="account-form__input" size="large"  maxlength="50"/>
     <el-select v-model="formFields.type" @change="validateForm" size="large" class="account-form__select" placeholder="Select">
       <el-option label="Локальная"  :value="AccountType.LOCAL"/>
