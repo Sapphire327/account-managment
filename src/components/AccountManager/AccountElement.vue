@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import {computed, ref} from "vue";
-import {AccountType, type IAccountForm} from "./types.ts";
-
+import {AccountType, type IAccount} from "../../types/types.ts";
+import type {IAccountForm} from "./FormType.ts";
+  const emit = defineEmits<{
+    (e: 'change', account: IAccount): void
+    (e: 'remove', id: number): void
+  }>()
+  const props = defineProps<{account: IAccount}>()
   const errors = ref<{login:string|null;password?:string|null}>({
     login: null,
     password: null,
   })
   const formFields = ref<IAccountForm>({
-    label:'',
-    type:AccountType.LOCAL,
-    login:'',
-    password:''
+    label:props.account.label.map(el => el.text).join(";"),
+    type:props.account.type,
+    login:props.account.login,
+    password:props.account.password
   })
   const showPassword = computed(()=>(formFields.value.type === AccountType.LOCAL))
 
@@ -25,6 +30,13 @@ import {AccountType, type IAccountForm} from "./types.ts";
       errors.value.password="Остуствтует значение";
       return
     }
+    emit("change", {
+      id:props.account.id,
+      login:formFields.value.login,
+      label:formFields.value.label.split(";").map((el)=>({text:el})),
+      type:formFields.value.type,
+      password:formFields.value.password
+    })
   }
 
 </script>
@@ -38,7 +50,7 @@ import {AccountType, type IAccountForm} from "./types.ts";
     </el-select>
     <el-input aria-required="true" @blur="validateForm" v-model="formFields.login" class="account-form__input" :class="{'wide-login':!showPassword,'account-form__input_error':errors.login}" size="large" maxlength="100" />
     <el-input v-model="formFields.password" @blur="validateForm" v-if="showPassword" type="password" show-password class="account-form__input" :class="{'account-form__input_error':errors.password}" size="large"  maxlength="100" />
-    <el-button size="large"><img src="/icons/Delete.svg" class="logo vue" alt="Vue logo" /></el-button>
+    <el-button @click="$emit('remove',props.account.id)" size="large"><img src="/icons/Delete.svg" class="logo vue" alt="Vue logo" /></el-button>
   </form>
 </template>
 

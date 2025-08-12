@@ -10,11 +10,5 @@ export interface IAccount{
     label:Label[],
     type:AccountType
     login:string
-    password?:string
-}
-export interface IAccountForm{
-    label:string
-    type:AccountType
-    login:string
-    password?:string
+    password:string|null
 }

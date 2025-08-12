@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import Hint from "./components/Hint/Hint.vue";
 import AccountManager from "./components/AccountManager/AccountManager.vue";
+import {useAccountsStore} from "./store/accountStore.ts";
+const store = useAccountsStore();
+
 </script>
 
 <template>
   <div class="container main-page">
     <div class="main-page__top">
       <h2 class="title">Учетные записи</h2>
-      <el-button class="main-page__addBtn" type="primary" plain size="large"><span style="font-size: 24px;">+</span></el-button>
+      <el-button @click="store.addEmptyAccount()" class="main-page__addBtn" type="primary" plain size="large"><span style="font-size: 24px;">+</span></el-button>
     </div>
     <Hint text="Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;"></Hint>
     <AccountManager></AccountManager>
