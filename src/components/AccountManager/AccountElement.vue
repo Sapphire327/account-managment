@@ -1,26 +1,44 @@
 <script setup lang="ts">
 import {computed, ref} from "vue";
+import {AccountType, type IAccount, type IAccountForm} from "./types.ts";
 
-  const input = ref()
-  const select = ref("LOCAL")
-  const login = ref("")
-  const password = ref("")
+  const errors = ref<{login?:string;password?:string}>({
+    login: null,
+    password: null,
+  })
+  const formFields = ref<IAccountForm>({
+    label:'',
+    type:AccountType.LOCAL,
+    login:'',
+    password:''
+  })
+  const showPassword = computed(()=>(formFields.value.type === AccountType.LOCAL))
 
-  const showPassword = computed(()=>(
-    select.value === "LOCAL"
-  ))
+  function validateForm(){
+    errors.value.login=null
+    errors.value.password=null
+    if(!formFields.value.login){
+      errors.value.login="Остуствтует значение";
+      return
+    }
+    if(formFields.value.type===AccountType.LOCAL&&!formFields.value.password){
+      errors.value.password="Остуствтует значение";
+      return
+    }
+  //   Some logics
+  }
 
 </script>
 
 <template>
-  <form class="account-form">
-    <el-input v-model="input" class="account-form__input" size="large"  maxlength="50"/>
-    <el-select v-model="select" size="large" class="account-form__select" placeholder="Select">
-      <el-option label="Локальная"  value="LOCAL"/>
-      <el-option label="LDAP" value="LDAP"/>
+  <form class="account-form" @submit.prevent="sendForm">
+    <el-input  v-model="formFields.label" @blur="validateForm" class="account-form__input" size="large"  maxlength="50"/>
+    <el-select v-model="formFields.type" @change="validateForm" size="large" class="account-form__select" placeholder="Select">
+      <el-option label="Локальная"  :value="AccountType.LOCAL"/>
+      <el-option label="LDAP" :value="AccountType.LDAP"/>
     </el-select>
-    <el-input v-model="login" class="account-form__input" :class="{'wide-login':!showPassword}" size="large" maxlength="100" />
-    <el-input v-model="password" v-if="showPassword" type="password" show-password class="account-form__input" size="large"  maxlength="100" />
+    <el-input aria-required="true" @blur="validateForm" v-model="formFields.login" class="account-form__input" :class="{'wide-login':!showPassword,'account-form__input_error':errors.login}" size="large" maxlength="100" />
+    <el-input v-model="formFields.password" @blur="validateForm" v-if="showPassword" type="password" show-password class="account-form__input" :class="{'account-form__input_error':errors.password}" size="large"  maxlength="100" />
     <el-button size="large"><img src="/icons/Delete.svg" class="logo vue" alt="Vue logo" /></el-button>
   </form>
 </template>
@@ -37,5 +55,8 @@ import {computed, ref} from "vue";
   .wide-login{
     grid-column: span 2;
   }
-
+  .account-form__input_error{
+    border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
+    outline: 1.2px solid rgba(139, 0, 0, 0.64);
+  }
 </style>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import AccountElement from "./AccountElement.vue";
 import AccountElementTitle from "./AccountElementTitle.vue";
 </script>
